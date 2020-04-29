@@ -31,3 +31,12 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Please use a different email address.')
+
+class StudentForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    phone = StringField('Phone', validators=[DataRequired()])
+    qualification = StringField('Highest degree qualification', validators=[DataRequired()])
+    passout = StringField('Passout year', validators=[DataRequired()])
+    stream = StringField('Stream', validators=[DataRequired()])
+    submit = SubmitField('Add')

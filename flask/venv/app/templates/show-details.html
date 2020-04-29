@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+	<table>
+  		<tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Qualifiaction</th>
+            <th>Passout</th>
+            <th>Stream</th>
+  		</tr>
+  		<tr>
+    		<td>{{ student.name }}</td>
+    		<td>{{ student.email }}</td>
+    		<td>{{ student.phone }}</td>
+    		<td>{{ student.qualification }}</td>
+    		<td>{{ student.passout }}</td>
+    		<td>{{ student.stream }}</td>
+  		</tr>
+	</table>
+{% endblock %}

@@ -3,7 +3,12 @@
 
 {% block content %}
     <h1>Hello, {{ current_user.username }}!</h1>
-    {% for post in posts %}
-        <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
-    {% endfor %}
+    {% if content %}
+    <div><p> {{ content }} </b></p></div>
+    {% else %}
+    <div><p> Welcome to KSVians group. This is the place where you can get help in building your carreer. You will get
+    great support from the community members. Go ahead and fill in the details about you. We will get in touch with
+    you...
+    </b></p></div>
+    {% endif %}
 {% endblock %}
