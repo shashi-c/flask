@@ -9,13 +9,17 @@
     <body>
         <h1 style="text-align:center">KSVians</h1>
         <div> 
-            <a href="/index">Home</a>
             {% if current_user.is_anonymous %}
-            <a href="/login">Login</a>
+                <a href="/login">Login</a>
             {% else %}
-            <a href="{{ url_for('logout') }}">Logout</a>
-            <a href="{{ url_for('add_details') }}">Add-details</a>
-            <a href="{{ url_for('show_details') }}">Show-details</a>
+                <a href="/index">Home</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+                {% if current_user.username == 'admin' %}
+                    <a href="{{ url_for('show_all') }}">Show-all</a>
+                {% else %}
+                    <a href="{{ url_for('show_details') }}">Show-your-details</a>
+                    <a href="{{ url_for('add_details') }}">Add-details</a>
+                {% endif %}
             {% endif %}
         </div>
         <hr>

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <h1>All Student Details</h1>
+    <table>
+    <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Qualification</th><th>Passout</th><th>Stream</th></tr></thead>
+    <tbody>
+        {% for s in students %}
+            <tr>
+                <td>{{ s.name }}</td>
+                <td>{{ s.email }}</td>
+                <td> {{ s.phone }}</td>
+                <td>{{ s.qualification }}</td>
+                <td>{{ s.passout }}</td>
+                <td>{{ s.stream }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+{% endblock %}

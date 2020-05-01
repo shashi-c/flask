@@ -3,12 +3,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from app import login
 from flask_login import UserMixin
+from flask_table import Table, Col
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    admin = db.Column(db.Boolean())
     student = db.relationship('Student', backref='user', lazy='dynamic')
 
     def __repr__(self):
@@ -17,6 +19,12 @@ class User(UserMixin, db.Model):
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
+
+    def set_admin(self):
+        if self.username == 'admin':
+            self.admin = True
+        else:
+            self.admin = False
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -33,6 +41,14 @@ class Student(db.Model):
 
     def __repr__(self):
         return '<Student {}>'.format(self.name)
+
+class StudentTable(Table):
+    name = Col('Name')
+    email = Col('Email')
+    phone = Col('Phone')
+    qualification = Col('Qualification')
+    passout = Col('Passout')
+    stream = Col('Stream')
 
 
 @login.user_loader
