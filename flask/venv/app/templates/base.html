@@ -15,7 +15,7 @@
                 <a href="/index">Home</a>
                 <a href="{{ url_for('logout') }}">Logout</a>
                 {% if current_user.username == 'admin' %}
-                    <a href="{{ url_for('show_all') }}">Show-all</a>
+                    <a href="{{ url_for('search_student') }}">Search</a>
                 {% else %}
                     <a href="{{ url_for('show_details') }}">Show-your-details</a>
                     <a href="{{ url_for('add_details') }}">Add-details</a>

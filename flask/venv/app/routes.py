@@ -13,6 +13,7 @@ from app import db
 from sqlalchemy import update
 from app.forms import RegistrationForm
 from app.forms import StudentForm
+from app.forms import StudentSearchForm
 
 @app.route('/')
 @app.route('/index')
@@ -80,17 +81,17 @@ def add_details():
 
         if user.student:
             if form.name:
-                 user.student[0].name = form.name.data
+                 user.student.name = form.name.data
             if form.email:
-                user.student[0].email = form.email.data
+                user.student.email = form.email.data
             if form.phone:
-                user.student[0].phone = form.phone.data
+                user.student.phone = form.phone.data
             if form.qualification:
-                user.student[0].qualification = form.qualification.data
+                user.student.qualification = form.qualification.data
             if form.passout:
-                user.student[0].passout = form.passout.data
+                user.student.passout = form.passout.data
             if form.stream:
-                user.student[0].stream = form.stream.data
+                user.student.stream = form.stream.data
         else:
             db.session.add(student)
         db.session.commit()
@@ -102,13 +103,16 @@ def add_details():
 @app.route('/show-details', methods=['GET', 'POST'])
 @login_required
 def show_details():
-    user = User.query.get(current_user.id)
-    student = user.student.all()
-    print(student)
-    if not student:
+    print(current_user.student)
+    result = []
+    if current_user.student is None:
         flash('Nothing to show, Add your details first!!')
         return render_template('index.html', title='Home', user=current_user, student=current_user.student)
-    return render_template('show-details.html', title='Your Details', student=student[0])
+    else:
+        result.append(current_user.student)
+        table = StudentTable(result)
+        table.border = True
+        return render_template('show-details.html', title='Your Details', table=table)
 
 
 
@@ -120,13 +124,66 @@ def show_all():
     students = []
     users = User.query.all()
     for u in users:
-        if u.admin == False or u.admin == None:
-            student = u.student.all()
-            students.append(student[0])
+        if u.admin == False:
+            students.append(u.student)
 
     for s in students:
         print(s.name, s.email)
-    #s_t = StudentTable(students)
-    #print(s_t.__html__())
-    #return render_template('show-details.html', title='Your Details', student=student[0])
     return render_template('show-all.html', students=students)
+
+@app.route('/search', methods=['GET', 'POST'])
+@login_required
+def search_student():
+    if current_user.admin == False:
+        return redirect(url_for('index'))
+    search = StudentSearchForm(request.form)
+    print(search)
+    if request.method == 'POST':
+        return search_results(search)
+    print('render template')
+    return render_template('search.html', form = search)
+
+@app.route('/results')
+@login_required
+def search_results(search):
+    print('searching !!! ')
+    if current_user.admin == False:
+        return redirect(url_for('index'))
+    results = []
+
+    studentSearchStr = search.data['student']
+    qry=db.session.query(Student)
+    if studentSearchStr:
+        if search.data['selectStudent'] == 'Name':
+            qry = db.session.query(Student).filter(Student.name == studentSearchStr)
+        elif search.data['selectStudent'] == 'Email':
+            qry = db.session.query(Student).filter(Student.email == studentSearchStr)
+        elif search.data['selectStudent'] == 'Phone':
+            qry = db.session.query(Student).filter(Student.phone == studentSearchStr)
+    baseSearchStr = search.data['base']
+    if baseSearchStr:
+        if search.data['selectBaseChoice'] == 'Qualification':
+            if not qry.all() and not sudentSearchStr:
+                qry = db.session.query(Student).filter(Student.qualification == baseSearchStr)
+            else:
+                qry = qry.filter(Student.qualification == baseSearchStr)
+        if search.data['selectBaseChoice'] == 'Passout':
+            if not qry.all() and not sudentSearchStr:
+                qry = db.session.query(Student).filter(Student.passout == baseSearchStr)
+            else:
+                qry = qry.filter(Student.passout == baseSearchStr)
+    advSearchStr = search.data['adv']
+    if advSearchStr:
+        if search.data['selectAdvChoice'] == 'Stream':
+            if not qry.all() and not studentSearchStr and not advSearchStr:
+                qry = db.session.query(Student).filter(Student.stream == advSearchStr)
+            else:
+                qry = qry.filter(Student.stream == advSearchStr)
+
+
+    for item in qry.all():
+        results.append(item)
+    print(results)
+    table = StudentTable(results)
+    table.border = True
+    return render_template('results.html', table=table)

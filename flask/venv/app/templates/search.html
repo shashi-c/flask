@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1> Search </h1>
+	{% from "_formhelpers.html" import render_field %}
+	<form method="post">
+  	<dl>
+    	{{ render_field(form.selectStudent) }}
+    	{{ render_field(form.student) }}
+    	{{ render_field(form.selectBaseChoice) }}
+    	{{ render_field(form.base) }}
+    	{{ render_field(form.selectAdvChoice) }}
+    	{{ render_field(form.adv) }}
+  		</p></dl>
+  		<p><input type="submit" value="Search">
+	</p></form>
+{% endblock %}
+

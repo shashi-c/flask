@@ -3,11 +3,12 @@
 
 {% block content %}
     <h1>Hello, {{ current_user.username }}!</h1>
+	<img src="{{url_for('static', filename='hostel.jpg')}}" style="padding-left: 300px" alt="Hostel Image"
+    align="middle" width=50% height=60%/>
     {% if content %}
     <div><p> {{ content }} </b></p></div>
     {% else %}
-    <div><p> Welcome to KSVians group. This is the place where you can get help in building your carreer. You will get
-    great support from the community members. Go ahead and fill in the details about you. We will get in touch with
+    <div><p  width=50% style="font-size:1.3rem" style="padding:2% 6%"> Welcome to KSVians group. This is the place where you can get help in building your carreer. You will get great support from the community members. Go ahead and fill in the details about you. We will get in touch with
     you...
     </b></p></div>
     {% endif %}
