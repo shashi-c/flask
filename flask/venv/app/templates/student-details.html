@@ -18,7 +18,6 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
-
         <p>
             {{ form.phone.label }}<br>
             {{ form.phone(size=15) }}<br>
@@ -26,6 +25,14 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
+        <p>
+            {{ form.perm_addr.label }}<br>
+            {{ form.perm_addr(size=500) }}<br>
+            {% for error in form.perm_addr.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+
         <p>
             {{ form.qualification.label }}<br>
             {{ form.qualification(size=64) }}<br>
@@ -47,6 +54,67 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
+        <p>
+            {{ form.college.label }}<br>
+            {{ form.college(size=500) }}<br>
+            {% for error in form.college.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.courses.label }}<br>
+            {{ form.courses(size=1024) }}<br>
+            {% for error in form.courses.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.skills.label }}<br>
+            {{ form.skills(size=2048) }}<br>
+            {% for error in form.skills.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+
+        <p>
+            {{ form.tenth_percent.label }}<br>
+            {{ form.tenth_percent(size=10) }}<br>
+            {% for error in form.tenth_percent.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.plus2_percent.label }}<br>
+            {{ form.plus2_percent(size=10) }}<br>
+            {% for error in form.plus2_percent.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.degree_percent.label }}<br>
+            {{ form.degree_percent(size=10) }}<br>
+            {% for error in form.degree_percent.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.n_backlogs.label }}<br>
+            {{ form.n_backlogs(size=4) }}<br>
+            {% for error in form.n_backlogs.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+
+        <p>
+            {{ form.hobbies.label }}<br>
+            {{ form.hobbies(size=1024) }}<br>
+            {% for error in form.hobbies.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+
         <p>{{ form.submit() }}</p>
     </form>
 {% endblock %}
+
+

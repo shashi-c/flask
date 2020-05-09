@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1> Add details </h1>
+	{% from "_formhelpers.html" import render_field %}
+	<form method="post">
+  	<dl>
+    	{{ render_field(form.name, size=50) }}
+    	{{ render_field(form.email, size=50) }}
+    	{{ render_field(form.phone, size=50) }}
+    	{{ render_field(form.perm_addr, size=50) }}
+    	{{ render_field(form.qualification, size=50) }}
+    	{{ render_field(form.passout, size=50) }}
+    	{{ render_field(form.stream, size=50) }}
+    	{{ render_field(form.college, size=50) }}
+    	{{ render_field(form.tenth_percent, size=50) }}
+    	{{ render_field(form.plus2_percent, size=50) }}
+    	{{ render_field(form.degree_percent, size=50) }}
+    	{{ render_field(form.n_backlogs, size=50) }}
+    	{{ render_field(form.courses, size=50) }}
+    	{{ render_field(form.skills, size=50) }}
+    	{{ render_field(form.hobbies, size=50) }}
+  		</p>
+    </dl>
+  		<p><input type="submit" value="Add">
+	</form>
+{% endblock %}
+

@@ -39,9 +39,6 @@ def login():
     return render_template('login.html', title='Sign In', form=form)
 
 
-    return render_template('login.html', title='Sign In', form=form)
-
-
 @app.route('/logout')
 def logout():
     logout_user()
@@ -67,37 +64,65 @@ def register():
 @app.route('/add-details', methods=['GET', 'POST'])
 @login_required
 def add_details():
-    print("In add_details")
-    form = StudentForm()
-    if form.validate_on_submit():
-        user = User.query.get(current_user.id)
+    user = User.query.get_or_404(current_user.id)
+    if user.student:
+        print('Student exist')
+        form = StudentForm(request.form, obj=user.student)
+    else:
+        print('new student')
+        form = StudentForm(request.form)
+
+    if request.method == 'POST':
         student = Student(name = form.name.data,
                     email = form.email.data,
                     phone = form.phone.data,
+                    perm_addr = form.perm_addr.data,
+
                     qualification = form.qualification.data,
                     passout = form.passout.data,
                     stream = form.stream.data,
-                    user=user)
+                    college = form.college.data,
 
+                    tenth_percent = form.tenth_percent.data,
+                    plus2_percent = form.plus2_percent.data,
+                    degree_percent = form.degree_percent.data,
+                    n_backlogs = form.n_backlogs.data,
+
+                    courses =form.courses.data,
+                    skills = form.skills.data,
+
+                    hobbies = form.hobbies.data)
+        #print(student.name)
         if user.student:
-            if form.name:
-                 user.student.name = form.name.data
-            if form.email:
-                user.student.email = form.email.data
-            if form.phone:
-                user.student.phone = form.phone.data
-            if form.qualification:
-                user.student.qualification = form.qualification.data
-            if form.passout:
-                user.student.passout = form.passout.data
-            if form.stream:
-                user.student.stream = form.stream.data
+            print("updating")
+            user.student.name = form.name.data
+            user.student.email = student.email
+            user.student.phone = student.phone
+            user.student.perm_addr = student.perm_addr
+                    
+            user.student.qualification = student.qualification
+            user.student.passout = student.passout
+            user.student.stream = student.stream
+            user.student.college = student.college
+                    
+            user.student.tenth_percent = student.tenth_percent
+            user.student.plus2_percent = student.plus2_percent
+            user.student.degree_percent = student.degree_percent
+            user.student.n_backlogs = student.n_backlogs
+                    
+            user.student.courses = student.courses
+            user.student.skills = student.skills
+            user.student.hobbies = student.hobbies
         else:
+            print("Creating")
+            student.user = user 
             db.session.add(student)
+
         db.session.commit()
         flash('**** Congratulations, your details have been added! ****')
         return redirect(url_for('index'))
-    return render_template('student-details.html', title='Add Details', form=form)
+    elif request.method == 'GET':
+        return render_template('v2student-details.html', title='Add Details', form=form)
 
 
 @app.route('/show-details', methods=['GET', 'POST'])
@@ -114,8 +139,8 @@ def show_details():
         table.border = True
         return render_template('show-details.html', title='Your Details', table=table)
 
-
-
+'''
+# TODO: Remove this method later
 @app.route('/show-all', methods=['GET', 'POST'])
 @login_required
 def show_all():
@@ -130,6 +155,7 @@ def show_all():
     for s in students:
         print(s.name, s.email)
     return render_template('show-all.html', students=students)
+'''
 
 @app.route('/search', methods=['GET', 'POST'])
 @login_required
@@ -151,35 +177,70 @@ def search_results(search):
         return redirect(url_for('index'))
     results = []
 
-    studentSearchStr = search.data['student']
     qry=db.session.query(Student)
-    if studentSearchStr:
-        if search.data['selectStudent'] == 'Name':
-            qry = db.session.query(Student).filter(Student.name == studentSearchStr)
-        elif search.data['selectStudent'] == 'Email':
-            qry = db.session.query(Student).filter(Student.email == studentSearchStr)
-        elif search.data['selectStudent'] == 'Phone':
-            qry = db.session.query(Student).filter(Student.phone == studentSearchStr)
-    baseSearchStr = search.data['base']
-    if baseSearchStr:
-        if search.data['selectBaseChoice'] == 'Qualification':
-            if not qry.all() and not sudentSearchStr:
-                qry = db.session.query(Student).filter(Student.qualification == baseSearchStr)
-            else:
-                qry = qry.filter(Student.qualification == baseSearchStr)
-        if search.data['selectBaseChoice'] == 'Passout':
-            if not qry.all() and not sudentSearchStr:
-                qry = db.session.query(Student).filter(Student.passout == baseSearchStr)
-            else:
-                qry = qry.filter(Student.passout == baseSearchStr)
-    advSearchStr = search.data['adv']
-    if advSearchStr:
-        if search.data['selectAdvChoice'] == 'Stream':
-            if not qry.all() and not studentSearchStr and not advSearchStr:
-                qry = db.session.query(Student).filter(Student.stream == advSearchStr)
-            else:
-                qry = qry.filter(Student.stream == advSearchStr)
 
+    personalQueryStr = search.data['personal']
+    if personalQueryStr:
+        if search.data['personalChoice'] == 'name':
+            qry = db.session.query(Student).filter(Student.name == personalQueryStr)
+        elif search.data['personalChoice'] == 'email':
+            qry = db.session.query(Student).filter(Student.email == personalQueryStr)
+        elif search.data['personalChoice'] == 'phone':
+            qry = db.session.query(Student).filter(Student.phone == personalQueryStr)
+        elif search.data['personalChoice'] == 'address': # TODO: WhooshAlchemy
+            qry = db.session.query(Student).filter(Student.perm_addr == personalQueryStr)
+
+
+    academicQueryStr = search.data['academic']
+    if academicQueryStr:
+        if search.data['academicChoice'] == 'qualification':
+            if not qry.all() and not personalQueryStr:
+                qry = db.session.query(Student).filter(Student.qualification == academicQueryStr)
+            else:
+                qry = qry.filter(Student.qualification == academicQueryStr)
+        if search.data['academicChoice'] == 'passout':
+            if not qry.all() and not personalQueryStr:
+                qry = db.session.query(Student).filter(Student.passout == academicQueryStr)
+            else:
+                qry = qry.filter(Student.passout == academicQueryStr)
+        if search.data['academicChoice'] == 'stream':
+            if not qry.all() and not personalQueryStr:
+                qry = db.session.query(Student).filter(Student.stream == academicQueryStr)
+            else:
+                qry = qry.filter(Student.stream == academicQueryStr)
+        if search.data['academicChoice'] == 'college':
+            if not qry.all() and not personalQueryStr:
+                qry = db.session.query(Student).filter(Student.college == academicQueryStr)
+            else:
+                qry = qry.filter(Student.college == academicQueryStr)
+
+
+    gradeQueryStr = search.data['grade']
+    if gradeQueryStr:
+        if search.data['gradeChoice'] == 'degree_percent':
+            if not qry.all() and not personalQueryStr and not academicQueryStr:
+                qry = db.session.query(Student).filter(Student.degree_percent >= float(gradeQueryStr))
+            else:
+                qry = qry.filter(Student.degree_percent >= float(gradeQueryStr))
+        if search.data['gradeChoice'] == 'n_backlogs':
+            if not qry.all() and not personalQueryStr and not academicQueryStr:
+                qry = db.session.query(Student).filter(Student.n_backlogs <= int(gradeQueryStr))
+            else:
+                qry = qry.filter(Student.n_backlogs <= int(gradeQueryStr))
+
+    courseQueryStr = search.data['courses']
+    if courseQueryStr:
+        if not qry.all() and not personalQueryStr and not academicQueryStr and not gradeQueryStr:
+            qry = db.session.query(Student).filter(Student.courses == courseQueryStr)
+        else:
+            qry = qry.filter(Student.courses == courseQueryStr)
+
+    skillQueryStr = search.data['skills']
+    if skillQueryStr:
+        if not qry.all() and not personalQueryStr and not academicQueryStr and not gradeQueryStr and not courseQueryStr:
+            qry = db.session.query(Student).filter(Student.skills == skillQueryStr)
+        else:
+            qry = qry.filter(Student.skills == skillQueryStr)
 
     for item in qry.all():
         results.append(item)

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, DecimalField, IntegerField
 from wtforms.validators import DataRequired
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from app.models import User
@@ -33,24 +33,53 @@ class StudentForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     phone = StringField('Phone', validators=[DataRequired()])
+    perm_addr = StringField('Permanent address', validators=[DataRequired()])
+
     qualification = StringField('Highest degree qualification', validators=[DataRequired()])
     passout = StringField('Passout year', validators=[DataRequired()])
     stream = StringField('Stream', validators=[DataRequired()])
+    college = StringField('College', validators=[DataRequired()])
+
+    tenth_percent = DecimalField('10th Percentage')
+    plus2_percent = DecimalField('12th Percentage')
+    degree_percent = DecimalField('Degree Percentage')
+    n_backlogs = IntegerField('Total Backlogs if any')
+
+    courses = StringField('Courses completed')
+    skills = StringField('Skills', validators=[DataRequired()])
+
+    hobbies = StringField('Hobbies')
+
     submit = SubmitField('Add')
 
 class StudentSearchForm(FlaskForm):
-    personalDetails = [('Name', 'name'),
-                       ('Phone', 'phone'),
-                       ('Email', 'email')
+    personalChoices = [('name', 'Name'),
+                       ('phone', 'Phone'),
+                       ('email', 'Email'),
+                       ('address', 'Address')
                       ]
-    baseChoices = [('Qualification', 'qualification'),
-                   ('Passout', 'passout')
-                  ]
-    advChoices = [('Stream', 'stream')]
+    academicChoices = [('qualification', 'Qualification'),
+                       ('passout', 'Passout'),
+                       ('stream', 'Stream'),
+                       ('college', 'College')
+                      ]
+
+    gradeChoices = [('degree_percent', 'Degree average Percentage'),
+                    ('n_backlogs', 'Number of Backlogs')
+                   ]
+                   # Irrelevent as of now
+                   # ('tenth_percent', '10th Percentage'),
+                   # ('plus2_percent', '12th Percentage'),
+
                     
-    selectStudent = SelectField('Student:', choices=personalDetails)
-    selectBaseChoice = SelectField('Base:', choices=baseChoices)
-    selectAdvChoice = SelectField('Advanced:', choices=advChoices)
-    student = StringField('')
-    base = StringField('')
-    adv = StringField('')
+    personalChoice = SelectField('Personal Details:', choices=personalChoices)
+    academicChoice = SelectField('Academic Details:', choices=academicChoices)
+    gradeChoice = SelectField('Grade Details:', choices=gradeChoices)
+
+    personal = StringField('')
+    academic = StringField('')
+    grade = StringField('')
+    courses = StringField('Courses')
+    skills = StringField('Skills')
+
+

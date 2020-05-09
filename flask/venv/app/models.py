@@ -34,9 +34,24 @@ class Student(db.Model):
     name = db.Column(db.String(140))
     email = db.Column(db.String(140))
     phone = db.Column(db.String(15))
+    perm_addr = db.Column(db.String(500))
+
     qualification = db.Column(db.String(140))
     passout = db.Column(db.String(10))
     stream = db.Column(db.String(50))
+    college = db.Column(db.String(500))
+
+    tenth_percent = db.Column(db.Float()) #U may add precession later
+    plus2_percent = db.Column(db.Float())
+    degree_percent = db.Column(db.Float())
+    n_backlogs = db.Column(db.Integer)
+
+    courses = db.Column(db.String(1024)) # Expect it to be comma seperated in input
+    skills = db.Column(db.String(2048)) # Find text based search for this field
+
+    hobbies = db.Column(db.String(1024))
+
+
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True)
 
     def __repr__(self):
@@ -46,10 +61,22 @@ class StudentTable(Table):
     name = Col('Name')
     email = Col('Email')
     phone = Col('Phone')
+    perm_addr = Col('Address')
+
     qualification = Col('Qualification')
     passout = Col('Passout')
     stream = Col('Stream')
+    college = Col('College')
 
+    tenth_percent = Col('10th Percent')
+    plus2_percent = Col('12th Percent')
+    degree_percent = Col('degree Percent')
+    n_backlogs = Col('Backlogs')
+
+    courses = Col('Courses')
+    skills = Col('Skills')
+
+    hobbies = Col('Hobbies')
 
 @login.user_loader
 def load_user(id):
