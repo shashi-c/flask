@@ -4,6 +4,7 @@ from app import db
 from app import login
 from flask_login import UserMixin
 from flask_table import Table, Col
+from app.email import send_email
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -11,6 +12,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     admin = db.Column(db.Boolean())
+    is_authorized = db.Column(db.Boolean())
     student = db.relationship('Student', backref='user', uselist=False)
 
     def __repr__(self):
@@ -26,6 +28,11 @@ class User(UserMixin, db.Model):
         else:
             self.admin = False
 
+    def request_authorization(self, act_year, full_name):
+        subj = 'Authorzation requested by user ' + self.username
+        txt_body = 'Username: ' + self.username + '\n' + 'Fullname: ' + full_name + '\n' + 'Joining year: ' + act_year
+        html_body = '<h1> Username: ' + self.username +'</h1>'
+        send_email(subj, 'my@comp.com', ['you@comp.com'], txt_body, html_body)
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 

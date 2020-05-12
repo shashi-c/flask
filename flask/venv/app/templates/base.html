@@ -16,6 +16,7 @@
                 <a href="{{ url_for('logout') }}">Logout</a>
                 {% if current_user.username == 'admin' %}
                     <a href="{{ url_for('search_student') }}">Search</a>
+                    <a href="{{ url_for('authorize') }}">Authorize_user</a>
                 {% else %}
                     <a href="{{ url_for('show_details') }}">Show-your-details</a>
                     <a href="{{ url_for('add_details') }}">Add-details</a>

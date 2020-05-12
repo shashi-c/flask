@@ -14,6 +14,7 @@ from sqlalchemy import update
 from app.forms import RegistrationForm
 from app.forms import StudentForm
 from app.forms import StudentSearchForm
+from app.forms import AuthorizationForm
 
 @app.route('/')
 @app.route('/index')
@@ -23,14 +24,23 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
+    form = LoginForm()
+    print(current_user)
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-    form = LoginForm()
+
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
+        print(user.is_authorized)
+        if  not user.is_authorized and user.admin == False:
+            flash('Not Authorized!!')
+            flash('Please contact admin')
+            return render_template('login.html', title='Sign In', form=form)
+
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
@@ -54,12 +64,38 @@ def register():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
         user.set_admin()
+        user.request_authorization(act_year = form.active_year.data, full_name = form.full_name.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!')
+        flash('Registration request succesfull!') 
+        flash('Please check your email for confirmation')
+        flash('NOTE: Average time taken to authorize a user is 2 hours')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+@app.route('/authorize', methods=['GET', 'POST'])
+@login_required
+def authorize():
+    if current_user.admin == False:
+        return redirect(url_for('index'))
+    search = AuthorizationForm(request.form)
+    print(search)
+    if request.method == 'POST':
+        return authorize_user(search)
+    print('render template')
+    return render_template('authorize.html', form = search)
+
+def authorize_user(search):
+    print('authorize user')
+    usernameQueryStr = search.data['username']
+    print('username : ' + usernameQueryStr)
+    user = db.session.query(User).filter(User.username == usernameQueryStr).first()
+    if user:
+        print(user.username)
+        user.is_authorized = True
+        print('authorization success')
+        db.session.commit()
+    return redirect(url_for('index'))
 
 @app.route('/add-details', methods=['GET', 'POST'])
 @login_required

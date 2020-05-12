@@ -19,6 +19,21 @@
             {% endfor %}
         </p>
         <p>
+            {{ form.full_name.label }}<br>
+            {{ form.full_name(size=64, autocomplete="off") }}<br>
+            {% for error in form.full_name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+
+        <p>
+            {{ form.active_year.label }}<br>
+            {{ form.active_year(size=64, autocomplete="off") }}<br>
+            {% for error in form.active_year.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
             {{ form.password.label }}<br>
             {{ form.password(size=32, autocomplete="off") }}<br>
             {% for error in form.password.errors %}
